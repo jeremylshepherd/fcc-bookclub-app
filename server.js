@@ -2,29 +2,47 @@
 
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
+//var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require("passport");
 var mongoose = require('mongoose');
+var session = require('express-session');
+var routes = require('./routes/index');
+var flash = require("connect-flash");
+var logger = require("morgan");
 
 var app = express();
+
 require('dotenv').load();
-var routes = require('./routes/index');
+require('./config/passport')(passport);
 
 mongoose.connect(process.env.MONGO_URI, function(err, db) {
-  if(err) {console.log(err);}
+  if(err) {console.log(`No Mongo here you got an ${err}.`);}
 
   console.log(`Connected to ${process.env.MONGO_URI}`);
 });
 
 app.set('view engine', 'ejs');
 
-app.use(cookieParser());
+//app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(logger("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', routes);
+app.use(session({
+	secret: process.env.SESSION_SECRET,
+	resave: false,
+	saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+routes(app, passport);
+
+//app.use('/', routes);
 app.enable('trust proxy');
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
