@@ -3845,7 +3845,9 @@ var Jumbotron = React.createClass({
     getInitialState: function getInitialState() {
         return {
             isShadow: false,
-            shadow: ""
+            shadow: "",
+            isLoggedIn: false,
+            displayName: ""
         };
     },
 
@@ -3853,8 +3855,12 @@ var Jumbotron = React.createClass({
         this.state.isShadow ? this.setState({ shadow: "shadow", isShadow: false }) : this.setState({ shadow: "", isShadow: true });
     },
 
+    testLoggedIn: function testLoggedIn() {
+        this.state.isLoggedIn ? this.setState({ isLoggedIn: false, displayName: "" }) : this.setState({ isLoggedIn: true, displayName: "Jeremy L. Shepherd" });
+    },
+
     render: function render() {
-        return React.createElement(
+        var unlogged = React.createElement(
             "div",
             { className: "container" },
             React.createElement(
@@ -3863,7 +3869,7 @@ var Jumbotron = React.createClass({
                 React.createElement(
                     "h1",
                     null,
-                    React.createElement("span", { className: "fa fa-user" }),
+                    React.createElement("span", { className: "fa fa-user", onClick: this.testLoggedIn }),
                     " User Authentication"
                 ),
                 React.createElement(
@@ -3885,6 +3891,45 @@ var Jumbotron = React.createClass({
                 )
             )
         );
+
+        var logged = React.createElement(
+            "div",
+            { className: "container" },
+            React.createElement(
+                "div",
+                { className: "jumbotron text-center " + this.state.shadow, onClick: this.handleShadow },
+                React.createElement(
+                    "h1",
+                    null,
+                    React.createElement("span", { className: "fa fa-user", onClick: this.testLoggedIn }),
+                    "Hello, " + this.state.displayName + "!"
+                ),
+                React.createElement(
+                    "h3",
+                    null,
+                    "You are now logged in."
+                ),
+                React.createElement(
+                    "a",
+                    { href: "#/logout", className: "btn btn-danger" },
+                    React.createElement("span", { className: "fa fa-sign-out" }),
+                    " Log Out"
+                )
+            )
+        );
+        if (this.state.isLoggedIn) {
+            return React.createElement(
+                "div",
+                null,
+                logged
+            );
+        } else {
+            return React.createElement(
+                "div",
+                null,
+                unlogged
+            );
+        }
     }
 });
 

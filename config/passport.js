@@ -1,5 +1,5 @@
 var GitHubStrategy = require('passport-github').Strategy;
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var GoogleStrategy = require('passport-google-oauth2').OAuth2Strategy;
 var User = require('../models/users');
 var configAuth = require('./auth');
 
